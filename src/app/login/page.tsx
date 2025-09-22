@@ -305,7 +305,7 @@ export default function LoginPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Reset your password</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Enter your email and we'll send you a password reset
+                        Enter your email and we&apos;ll send you a password reset
                         link.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
