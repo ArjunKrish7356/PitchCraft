@@ -68,8 +68,12 @@ export default function LoginPage() {
         // Fallback in case user is null but there was no sign-in error
         router.push("/homepage");
       }
-    } catch (err: any) {
-      setError(err.message || "Unexpected error occurred");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unexpected error occurred");
+      }
       setLoading(false);
     }
   };
@@ -98,8 +102,12 @@ export default function LoginPage() {
         return;
       }
       setSigningUp(false);
-    } catch (err: any) {
-      setError(err.message || "Unexpected error occurred");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unexpected error occurred");
+      }
       setLoading(false);
     }
   };
@@ -246,7 +254,7 @@ export default function LoginPage() {
             {/* Sign up link */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                   onClick={() => setSigningUp(!signingUp)}
                   href="#"

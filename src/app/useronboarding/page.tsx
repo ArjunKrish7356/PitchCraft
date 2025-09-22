@@ -26,6 +26,26 @@ import SkillsAchievementsCard, { SkillsData } from "./skills-achievements-card";
 
 type Step = 0 | 1 | 2;
 
+// Replace incorrect/placeholder interface and add precise payload types
+interface Project {
+  title: string;
+  description: string;
+}
+
+interface UserOnboardingPayload {
+  email: string | null;
+  name: string | null;
+  education: string | null;
+  hobbies: string | null;
+  // quoted/CASE-SENSITIVE column names in DB
+  Work_Experience: string | null;
+  Project1: Project | null;
+  Project2: Project | null;
+  skills: string | null;
+  achievements: string | null;
+  additional_data: string | null;
+}
+
 // Page component - renders the multi-step onboarding with navigation and indicator
 export default function UserOnboardingPage() {
   const router = useRouter();
@@ -114,24 +134,19 @@ export default function UserOnboardingPage() {
           .filter((t) => (t ?? "").trim() !== "")
           .join("\n\n") || null;
 
-      const payload = {
+      const payload: UserOnboardingPayload = {
         email: personalData.email || null,
         name: personalData.name || null,
         education: personalData.education || null,
         hobbies: personalData.hobbies || null,
-        // quoted columns in schema require exact key names
-        Work_Experience: undefined as never, // placeholder to avoid TS suggestion
-        Project1: undefined as never,
-        Project2: undefined as never,
+        // assign exact-cased keys for quoted columns
+        Work_Experience: workExperienceText,
+        Project1: (experienceData.projects?.[0] as Project) ?? null,
+        Project2: (experienceData.projects?.[1] as Project) ?? null,
         skills: skillsData.skills || null,
         achievements: skillsData.achievements || null,
-        additional_data: (skillsData as any).additional_data ?? null,
-      } as any;
-
-      // Assign exact-cased keys for quoted columns
-      payload["Work_Experience"] = workExperienceText;
-      payload["Project1"] = experienceData.projects?.[0] ?? null;
-      payload["Project2"] = experienceData.projects?.[1] ?? null;
+        additional_data: skillsData.additional_data ?? null,
+      };
 
       const { error } = await supabase.from("userData").insert([payload]);
       if (error) throw error;
@@ -139,10 +154,28 @@ export default function UserOnboardingPage() {
       const successMsg = "Your profile has been saved successfully.";
       setSubmitSuccess(successMsg);
       setShowDialog({ type: "success", message: successMsg });
-      // Auto-close after 2s and redirect to /homepage
-    } catch (err: any) {
-      const msg =
-        err?.message || "Failed to save your profile. Please try again.";
+
+      // Auto-close dialog after 2s and redirect to /homepage
+      setTimeout(() => {
+        setShowDialog(null);
+        router.replace("/homepage");
+      }, 2000);
+    } catch (err: unknown) {
+      // Safely extract a message from unknown
+      let msg = "Failed to save your profile. Please try again.";
+      if (err instanceof Error && err.message) {
+        msg = err.message;
+      } else if (typeof err === "object" && err !== null && "message" in err) {
+        // cover cases where supabase returns an object with message
+        try {
+          msg = String((err as { message?: unknown }).message) || msg;
+        } catch {
+          /* fallback to default */
+        }
+      } else if (typeof err === "string") {
+        msg = err;
+      }
+
       setSubmitError(msg);
       setShowDialog({ type: "error", message: msg });
     } finally {
@@ -245,10 +278,10 @@ export default function UserOnboardingPage() {
               Find Your Perfect Startup Match
             </h1>
             <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
-              You're one step away from a smarter way to connect with startups.
-              To begin, let's build your profile. Your details will fuel our AI,
-              which acts as your personal career agent to craft the perfect
-              introduction to founders.
+              You&apos;re one step away from a smarter way to connect with
+              startups. To begin, let&apos;s build your profile. Your details
+              will fuel our AI, which acts as your personal career agent to
+              craft the perfect introduction to founders.
             </p>
           </div>
 
@@ -277,11 +310,17 @@ export default function UserOnboardingPage() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     {showDialog?.type === "success" ? (
-                      <AlertDialogAction className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => router.replace("/homepage")}>
+                      <AlertDialogAction
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                        onClick={() => router.replace("/homepage")}
+                      >
                         OK
                       </AlertDialogAction>
                     ) : (
-                      <AlertDialogAction className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                      <AlertDialogAction
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                        onClick={() => setShowDialog(null)}
+                      >
                         Close
                       </AlertDialogAction>
                     )}

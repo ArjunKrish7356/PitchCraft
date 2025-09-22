@@ -168,8 +168,15 @@ export default function AdminPage() {
       setTimeout(() => {
         // router.push("/"); // Uncomment to redirect to homepage after add
       }, 1200);
-    } catch (err: any) {
-      setSubmitError(err.message || "Unexpected error while adding startup.");
+    } catch (err: unknown) {
+      // Narrow unknown to get a message without using `any`
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+          ? err
+          : "Unexpected error while adding startup.";
+      setSubmitError(message);
     } finally {
       setSubmitting(false);
     }
@@ -263,8 +270,7 @@ export default function AdminPage() {
                   >
                     Logout
                   </Button>
-                  <div className="pt-2">
-                  </div>
+                  <div className="pt-2"></div>
                 </div>
               </div>
             )}

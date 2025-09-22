@@ -55,7 +55,7 @@ export function SolutionSection() {
           transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
           className="text-center text-gray-600 text-sm md:text-base max-w-3xl mx-auto mb-14"
         >
-          We've built the toolkit you need to go from an unknown applicant to a
+          We&apos;ve built the toolkit you need to go from an unknown applicant to a
           priority candidate. Discover the right companies, reach the right
           people, and say the right thing—every time.
         </motion.p>
