@@ -81,7 +81,7 @@ export default function AdminPage() {
     const verify = async () => {
       const { data } = await supabase.auth.getSession();
       const email = data.session?.user?.email?.toLowerCase();
-      if (email !== "admin123@gmail.com") {
+      if (email !== process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
         router.replace("/login");
         return;
       }
