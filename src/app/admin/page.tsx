@@ -90,7 +90,7 @@ export default function AdminPage() {
     verify();
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       const email = session?.user?.email?.toLowerCase();
-      if (email !== "admin123@gmail.com") {
+      if (email !== process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
         router.replace("/login");
       }
     });
