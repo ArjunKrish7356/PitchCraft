@@ -1,16 +1,28 @@
 "use client";
 
 // Admin login page with Supabase email/password authentication restricted to a single admin user
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import supabase from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator";
 import { Folder, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 // Login page - email/password + OAuth (Google/Apple) with Supabase
 export default function LoginPage() {
@@ -21,7 +33,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [signingUp, setSigningUp] = useState(false);
+  // use tabs to control signin/signup
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const signingUp = mode === "signup";
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetInfo, setResetInfo] = useState<string | null>(null);
+  const [resetError, setResetError] = useState<string | null>(null);
   const router = useRouter();
 
   // handleSubmit - routes to sign in or sign up based on current mode
@@ -101,7 +120,7 @@ export default function LoginPage() {
         setLoading(false);
         return;
       }
-      setSigningUp(false);
+      setMode("signin");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -109,6 +128,36 @@ export default function LoginPage() {
         setError("Unexpected error occurred");
       }
       setLoading(false);
+    }
+  };
+
+  // Supabase password reset
+  const handlePasswordReset = async (e: FormEvent) => {
+    e.preventDefault();
+    setResetError(null);
+    setResetInfo(null);
+    setResetLoading(true);
+    try {
+      const emailToUse = resetEmail || email;
+      const { error } = await supabase.auth.resetPasswordForEmail(emailToUse, {
+        redirectTo:
+          typeof window !== "undefined"
+            ? `${window.location.origin}/login`
+            : undefined,
+      });
+      if (error) {
+        setResetError(error.message);
+      } else {
+        setResetInfo(
+          "If an account exists for that email, a reset link has been sent."
+        );
+      }
+    } catch (err) {
+      setResetError(
+        err instanceof Error ? err.message : "Unexpected error occurred"
+      );
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -130,16 +179,42 @@ export default function LoginPage() {
         {/* Main form container - vertically centered content with top padding to avoid overlap */}
         <div className="flex-1 flex items-center">
           <div className="w-full max-w-md mx-auto pt-16 sm:pt-20">
-            {/* Welcome header */}
+            {/* Tabs and header */}
+            <Tabs
+              value={mode}
+              onValueChange={(v: string) => {
+                const next = (v as "signin" | "signup") ?? "signin";
+                setMode(next);
+                setError(null);
+                setInfo(null);
+              }}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="signin">Sign In</TabsTrigger>
+                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              </TabsList>
+            </Tabs>
+
             <div className="mb-8">
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-gray-900 mb-2">
-                {signingUp ? "Create an Account" : "Welcome Back"}
-              </h1>
-              <p className="text-sm md:text-base text-gray-600">
-                {signingUp
-                  ? "Create an account to access your dashboard."
-                  : "Sign in to access your dashboard."}
-              </p>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={mode}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                >
+                  <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-gray-900 mb-2">
+                    {signingUp ? "Create an Account" : "Welcome Back"}
+                  </h1>
+                  <p className="text-sm md:text-base text-gray-600">
+                    {signingUp
+                      ? "Create an account to access your dashboard."
+                      : "Sign in to access your dashboard."}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
             {/* Login form */}
@@ -212,12 +287,67 @@ export default function LoginPage() {
 
               {/* Forgot password link */}
               <div className="flex justify-end">
-                <Link
-                  href="#"
-                  className="text-sm text-indigo-600 hover:text-indigo-500 transition-colors"
-                >
-                  Forgot Password?
-                </Link>
+                <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+                  <AlertDialogTrigger asChild>
+                    <button
+                      type="button"
+                      className="text-sm text-indigo-600 hover:text-indigo-500 transition-colors"
+                      onClick={() => {
+                        setResetEmail(email);
+                        setResetError(null);
+                        setResetInfo(null);
+                      }}
+                    >
+                      Forgot Password?
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Reset your password</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Enter your email and we'll send you a password reset
+                        link.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <form onSubmit={handlePasswordReset} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="reset-email">Email</Label>
+                        <Input
+                          id="reset-email"
+                          type="email"
+                          value={resetEmail}
+                          onChange={(e) => setResetEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+                      {resetError && (
+                        <Alert variant="destructive">
+                          <AlertDescription>{resetError}</AlertDescription>
+                        </Alert>
+                      )}
+                      {resetInfo && (
+                        <Alert>
+                          <AlertDescription>{resetInfo}</AlertDescription>
+                        </Alert>
+                      )}
+                      <AlertDialogFooter>
+                        <AlertDialogCancel type="button">
+                          Cancel
+                        </AlertDialogCancel>
+                        <Button type="submit" disabled={resetLoading}>
+                          {resetLoading ? (
+                            <span className="flex items-center gap-2">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Sending...
+                            </span>
+                          ) : (
+                            "Send reset link"
+                          )}
+                        </Button>
+                      </AlertDialogFooter>
+                    </form>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
 
               {/* Error / Info messages */}
@@ -241,7 +371,7 @@ export default function LoginPage() {
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Signing In...
+                    {signingUp ? "Creating Account..." : "Signing In..."}
                   </span>
                 ) : signingUp ? (
                   "Sign Up"
@@ -251,18 +381,11 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            {/* Sign up link */}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Don&apos;t have an account?{" "}
-                <Link
-                  onClick={() => setSigningUp(!signingUp)}
-                  href="#"
-                  className="text-indigo-600 hover:text-indigo-500 font-medium"
-                >
-                  {signingUp ? "Sign In" : "Sign Up"}
-                </Link>
-              </p>
+            {/* Helper line */}
+            <div className="mt-6 text-center text-sm text-gray-600">
+              {signingUp
+                ? "Already have an account? Use the Sign In tab above."
+                : "New here? Use the Sign Up tab above."}
             </div>
           </div>
         </div>
