@@ -169,7 +169,9 @@ export default function LandingPage() {
       {/* Footer - minimal links + socials placeholders */}
       <footer className="relative z-10 border-t bg-gray-50/70 backdrop-blur-sm text-[11px] text-gray-600">
         <div className="mx-auto max-w-7xl px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>© 2025 PitchCraft. All rights reserved.</div>
+          <p className="text-sm text-slate-500">
+              &copy; {new Date().getFullYear()} PitchCraft. All rights reserved.
+          </p>
           <div className="flex items-center gap-6">
             <Link href="#" className="hover:text-gray-900">
               Privacy Policy

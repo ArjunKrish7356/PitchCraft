@@ -78,6 +78,8 @@ export default function LoginPage() {
           .eq("id", data.user.id)
           .single();
 
+        // Clear loading before navigation
+        setLoading(false);
         if (userData) {
           router.push("/homepage");
         } else {
@@ -85,6 +87,7 @@ export default function LoginPage() {
         }
       } else {
         // Fallback in case user is null but there was no sign-in error
+        setLoading(false);
         router.push("/homepage");
       }
     } catch (err: unknown) {
@@ -107,6 +110,9 @@ export default function LoginPage() {
         await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: 'https://pitch-craft-sage.vercel.app/login'
+          }
         });
       if (signUpError) {
         setError(signUpError.message);
@@ -168,9 +174,9 @@ export default function LoginPage() {
       <div className="relative flex flex-col px-4 py-8 sm:px-6 lg:px-10">
         {/* Brand header - pinned to the top */}
         <div className="absolute top-6 left-4 sm:left-6 lg:left-10">
-          <Link href="/" className="flex items-center">
-            <Folder className="h-7 w-7 sm:h-8 sm:w-8 mr-2 text-indigo-600" />
-            <span className="text-xl sm:text-2xl font-semibold tracking-tight">
+          <Link href="/" className="flex items-center gap-3">
+            <Folder className="h-7 w-7 md:h-8 md:w-8 text-indigo-600" />
+            <span className="text-lg md:text-xl font-bold tracking-tight">
               PitchCraft
             </span>
           </Link>
@@ -305,8 +311,8 @@ export default function LoginPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Reset your password</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Enter your email and we&apos;ll send you a password reset
-                        link.
+                        Enter your email and we&apos;ll send you a password
+                        reset link.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <form onSubmit={handlePasswordReset} className="space-y-4">

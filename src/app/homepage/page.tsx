@@ -99,9 +99,9 @@ const Header = ({
     <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <Folder className="h-7 w-7 text-indigo-600" />
-            <span className="text-xl font-bold hidden md:inline">
+          <Link href="/" className="flex items-center gap-3">
+            <Folder className="h-7 w-7 md:h-8 md:w-8 text-indigo-600" />
+            <span className="text-lg md:text-xl font-bold tracking-tight">
               PitchCraft
             </span>
           </Link>

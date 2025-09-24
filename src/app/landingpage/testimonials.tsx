@@ -48,7 +48,7 @@ export function TestimonialsSection() {
     {
       name: "David Chen",
       role: "Marketing Manager",
-      text: "Innovate Hub's database is gold. As someone trying to break into a smaller startup, having direct founder access allowed me to bypass the generic application portals and start real conversations that led to a job offer.",
+      text: "PitchCrafts database is gold. As someone trying to break into a smaller startup, having direct founder access allowed me to bypass the generic application portals and start real conversations that led to a job offer.",
       initials: "DC",
     },
     {

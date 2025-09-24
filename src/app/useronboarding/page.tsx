@@ -259,7 +259,7 @@ export default function UserOnboardingPage() {
       <header className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand - file icon + name */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-3">
             <Folder className="h-7 w-7 md:h-8 md:w-8 text-indigo-600" />
             <span className="text-lg md:text-xl font-bold tracking-tight">
               PitchCraft

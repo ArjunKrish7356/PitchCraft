@@ -62,10 +62,12 @@ export default function StartupDetailPage() {
       <header className="h-14 flex items-center border-b border-gray-200 bg-white px-4">
         <div className="mx-auto w-full max-w-7xl flex items-center">
           <div className="flex items-center gap-2">
-            <Folder className="h-6 w-6 text-blue-600" />
-            <span className="text-lg font-semibold text-gray-900">
+            <Link href="/" className="flex items-center gap-3">
+            <Folder className="h-7 w-7 md:h-8 md:w-8 text-indigo-600" />
+            <span className="text-lg md:text-xl font-bold tracking-tight">
               PitchCraft
             </span>
+          </Link>
           </div>
         </div>
       </header>
@@ -113,7 +115,9 @@ export default function StartupDetailPage() {
       {/* Footer minimal */}
       <footer className="bg-white border-t border-gray-200 mt-auto py-4">
         <div className="mx-auto max-w-7xl px-4 text-xs text-gray-500">
-          © 2024 PitchCraft
+          <p className="text-sm text-slate-500">
+               &copy; {new Date().getFullYear()} PitchCraft. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>
