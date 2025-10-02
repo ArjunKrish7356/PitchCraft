@@ -76,9 +76,8 @@ Interested in contributing or running the project locally? Follow these steps:
     Create a `.env` file in the root directory and add the necessary API keys and database credentials.
 
     ```env
-    DATABASE_URL="your_database_url"
-    OPENAI_API_KEY="your_openai_key"
-    NEXTAUTH_SECRET="your_nextauth_secret"
+    NEXT_PUBLIC_SUPABASE_URL=
+    NEXT_PUBLIC_SUPABASE_KEY=
     ```
 
 4.  **Run the development server:**

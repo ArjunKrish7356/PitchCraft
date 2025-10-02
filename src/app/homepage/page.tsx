@@ -37,6 +37,7 @@ import {
   LogOut,
   Twitter,
   Linkedin,
+  LayoutDashboard,
 } from "lucide-react";
 
 // Types: Startup shape and load status
@@ -126,11 +127,28 @@ const Header = ({
 
           <div className="hidden md:flex items-center gap-4">
             <span className="text-sm font-medium capitalize">{userName}</span>
-            <Avatar className="h-9 w-9">
-              <AvatarFallback className="bg-slate-200">
-                <User className="h-5 w-5" />
-              </AvatarFallback>
-            </Avatar>
+            <Link
+              href={"/dashboard"}
+              className="hidden lg:block"
+              aria-label="Dashboard profile"
+            >
+              <Avatar className="h-9 w-9 ring-2 ring-transparent hover:ring-indigo-500 transition-shadow">
+                <AvatarFallback className="bg-slate-200">
+                  <User className="h-5 w-5" />
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+            <Link href="/dashboard" className="group">
+              <Button
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2 transition-colors group-hover:border-indigo-500 group-hover:text-indigo-600"
+                aria-label="Go to dashboard"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                <span className="hidden lg:inline">Dashboard</span>
+              </Button>
+            </Link>
             <Button
               size="sm"
               className="bg-indigo-600 text-white"
@@ -181,6 +199,17 @@ const Header = ({
                 >
                   <X className="h-6 w-6" />
                 </Button>
+              </div>
+              <div className="space-y-4 mb-6">
+                <Link href="/dashboard" onClick={() => setMobileOpen(false)}>
+                  <Button
+                    className="w-full justify-start gap-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
+                    variant="secondary"
+                    aria-label="Go to dashboard"
+                  >
+                    <LayoutDashboard className="h-4 w-4" /> Dashboard
+                  </Button>
+                </Link>
               </div>
               <Button
                 onClick={handleLogout}
