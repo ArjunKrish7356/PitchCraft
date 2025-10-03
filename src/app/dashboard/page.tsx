@@ -133,7 +133,7 @@ export default function DashboardPage() {
         try {
           setSaving(true);
           setError(null);
-          const payload: Partial<UserDataRow> & { id: string } = {
+          const payload = {
             id: userId,
             email,
             name,
@@ -141,17 +141,17 @@ export default function DashboardPage() {
             hobbies,
             Work_Experience: workExperience,
             Project1: {
-              title: project1Title || null || undefined,
-              description: project1Description || null || undefined,
+              title: project1Title || undefined,
+              description: project1Description || undefined,
             },
             Project2: {
-              title: project2Title || null || undefined,
-              description: project2Description || null || undefined,
+              title: project2Title || undefined,
+              description: project2Description || undefined,
             },
             skills,
             achievements,
             additional_data: additionalData,
-          } as any;
+          };
           const { error: upsertError } = await supabase
             .from("userData")
             .upsert(payload, { onConflict: "id" });
