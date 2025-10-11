@@ -1,4 +1,5 @@
-"use client";
+"use client"
+import { motion } from "framer-motion";
 
 // StartupDetailCard - expanded view card for a single startup with extended info
 import { Card } from "@/components/ui/card";
@@ -6,7 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ReactNode, useMemo, useState } from "react";
-import { Copy, DollarSign, Mail, Linkedin as LinkedinIcon } from "lucide-react";
+import {
+  Copy,
+  DollarSign,
+  Mail,
+  Linkedin as LinkedinIcon,
+  Sparkles,
+} from "lucide-react";
 
 export interface StartupRecord {
   id: number;
@@ -95,9 +102,37 @@ export function StartupDetailCard({
 
         {/* Cold Email Tips below main card */}
         <div className="mt-6 rounded-md border border-gray-200/80 bg-gray-50 p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">
-            Cold Email Tips
-          </h3>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Cold Email Tips
+            </h3>
+            {/* Draft with AI button - rainbow thick border, rounded, white interior */}
+            {/* Draft with AI - neon rotating ring on hover */}
+            <motion.button
+              type="button"
+              aria-label="Draft with AI"
+              className="relative inline-flex rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+              whileHover={{ scale: 1.04 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              {/* Gradient ring layer */}
+              <motion.span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 rounded-xl"
+                style={{
+                  background:
+                    "conic-gradient(at 50% 50%, #ff004d 0deg, #ffea00 90deg, #39ff14 180deg, #00e1ff 270deg, #ff004d 360deg)",
+                }}
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 3, ease: "linear", repeat: Infinity }}
+              />
+              {/* Inner content with margin to reveal ring thickness */}
+              <span className="relative z-10 m-[3px] rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-gray-900 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Draft with AI
+              </span>
+            </motion.button>
+          </div>
           {startup.tips ? (
             <ul className="list-disc pl-5 space-y-2 text-sm text-gray-700">
               {startup.tips.split(/\n+/).map((line, i) => (
